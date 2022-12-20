@@ -1,0 +1,47 @@
+version: '3.8'
+services:
+    nginx:
+      # используем последний стабильный образ nginx
+        image: nginx:1.23
+        container_name: web_makc_nginx
+        restart: always
+        # маршрутизируем порты
+        ports:
+            - "80:80"
+        # монтируем директории, слева директории на основной машине, справа - куда они монтируются в контейнере
+        volumes:
+            - ./nginx_conf/conf.d:/etc/nginx/conf.d
+            - ./nginx_conf/makc_ssl:/etc/nginx/makc_ssl
+            - ./nginx_conf/snippets:/etc/nginx/snippets
+            - /home/www:/var/www
+            - ./logs:/var/log/nginx
+        # nginx должен общаться с php контейнером
+        links:
+            - php-fpm
+
+    php-fpm:
+        # у нас свой образ для PHP, указываем путь к нему и говорим что его надо собрать
+        # build: ./images/php-fpm
+        image: klek07/php-fpm-oci8:7.4-fpm
+        container_name: web_makc_php-fpm
+        restart: always
+        volumes:
+            - /home/www:/var/www
+        # этот образ будет общаться с mysql
+        links:
+            - db
+        # монтируем директорию с проектами
+        volumes:
+            - /home/www:/var/www
+
+    db:
+        image: mariadb:10.10
+        container_name: web_makc_mysql
+        restart: always
+        ports:
+            - "3306:3306"
+        volumes:
+            - /home/mysql:/var/lib/mysql
+        # задаем пароль для root пользователя
+        environment:
+            MYSQL_ROOT_PASSWORD: gren@der_dba
