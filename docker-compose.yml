@@ -39,10 +39,12 @@ services:
         image: mariadb:10.10
         container_name: web_makc_mysql
         restart: unless-stopped
+        env_file:
+            - .env
+        # задаем пароль для root пользователя
+        environment:
+            MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
         ports:
             - "3306:3306"
         volumes:
             - /home/mysql:/var/lib/mysql
-        # задаем пароль для root пользователя
-        environment:
-            MYSQL_ROOT_PASSWORD: gren@der_dba
