@@ -1,15 +1,16 @@
-version: '3.8'
+version: '3.9'
 
 services:
     nginx:
       # используем последний стабильный образ nginx
-        image: nginx:1.23
+        image: nginx:latest
         container_name: web_makc_nginx
         restart: unless-stopped
         # маршрутизируем порты
         ports:
             - "80:80"
             - "443:443"
+            - "17988:80"
         # монтируем директории, слева директории на основной машине, справа - куда они монтируются в контейнере
         volumes:
             - ./nginx_conf/conf.d:/etc/nginx/conf.d
@@ -37,7 +38,7 @@ services:
             - /home/www:/var/www
 
     db:
-        image: mariadb:10.10
+        image: mariadb:latest
         container_name: web_makc_mysql
         restart: unless-stopped
         ports:
