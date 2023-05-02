@@ -6,6 +6,8 @@ services:
         image: nginx:latest
         container_name: web_makc_nginx
         restart: unless-stopped
+        env_file:
+            - .env
         # маршрутизируем порты
         ports:
             - "80:80"
@@ -28,6 +30,8 @@ services:
         image: klek07/php-fpm-oci8:latest
         container_name: web_makc_php-fpm
         restart: unless-stopped
+        env_file:
+            - .env
         # монтируем директорию с проектами
         volumes:
             - /home/www:/var/www
